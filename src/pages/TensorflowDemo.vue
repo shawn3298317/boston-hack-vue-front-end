@@ -101,6 +101,7 @@
         this.captures.push(canvas.toDataURL("image/png"));
       },
       detectFromVideoFrame(model, video) {
+        console.log("Detecting model...")
         model.detect(video).then(predictions => {
           this.showDetections(predictions);
 
