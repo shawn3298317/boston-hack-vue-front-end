@@ -4,29 +4,71 @@
       <card>
         <div class="row justify-content-center video-container">
           <div class="col-md-10 text-center">
-            <h5>Parse & Add Event to Google Calender</h5>
-            
-            <div class="">
-              <!-- <h5></h5> -->
-              <button class="nc-icon nc-camera-20 snap-btn" v-on:click="capture()"></button>
+
+            <div class="row" id="step_flow">
+              <span v-bind:class="{active: step==1}" v-on:click="goto_step(1)">Step 1</span>
+              >
+              <span v-bind:class="{active: step==2}" v-on:click="goto_step(2)">Step 2</span>
+              >
+              <span v-bind:class="{active: step==3}" v-on:click="goto_step(3)">Step 3</span>
             </div>
 
-            <div class="justify-content-center">
-              <video ref="video" id="video" width="640" height="480" autoplay/>
-              <canvas ref="canvas" id="canvas" width="640" height="480"></canvas>
-            </div>
-            
+            <h2>Parse & Add Event to Google Calender</h2>
 
-            <div v-if="has_event" class="output">
-              <h4>Detected Event:</h4>
-              <h5>Event name: {{event.name}}</h5> <button>Edit Name</button>
-              <h5>Event time: {{event.date_time.start}} - {{event.date_time.end}}</h5> <button>Edit Time</button>
-              <h5>Event location: {{event.location}}</h5> <button>Edit Location</button>  
+            <div v-if="step==1">
+              <div>
+                <!-- <h5></h5> -->
+                <button class="nc-icon nc-camera-20" style="font-size: 40px" v-on:click="capture()"></button>
+              </div>
+
+              <div>
+                <video ref="video" id="video" width="640" height="480" autoplay/>
+                <canvas ref="canvas" id="canvas" width="640" height="480"></canvas>
+              </div>
+            </div>
+
+            <div v-if="step==2">
+              <div v-if="event == null">
+                <h2>No event detected.</h2>
+                <button v-on:click="goto_step(1)">Re-take Image</button>
+              </div>
+              <div v-if="event != null">
+                <h4>Detected Event:</h4>
+                <table>
+                  <tr>
+                    <th>Name</th>
+                    <td>
+                      <input type="text" v-model="event.name"/>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Time</th>
+                    <td>
+                      From <input type="text" v-model="event.date_time.start"/> to <input type="text" v-model="event.date_time.end"/> 
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Location</th>
+                    <td><input type="text" v-model="event.location"/></td>
+                  </tr>
+                </table>
+
+                <button v-on:click="goto_step(1)">Re-take Image</button>
+                <button v-on:click="save_event(event)">Save Event</button>
+              </div>
+            </div>
+
+            <div v-if="step==3">
+              <div v-if="saved_event != null">
+                <h4>Event has been saved successfully!</h4>
+              </div>
+              <div v-if="saved_event == null">
+                <h4>No saved events detected.</h4>
+              </div>
+              <button v-on:click="goto_step(1)">Try Again</button>
             </div>
           </div>
-          
         </div>
-        
       </card>
     </div>
   </div>
@@ -52,11 +94,17 @@
         video: {},
         canvas: {},
         captures: {},
-        event: {},
-        has_event: false
+        event: null,
+        step: 1,
+        event_created: false,
+        saved_event: null
       }
     },
     methods: {
+      reset_event(){
+        this.event = null
+        this.saved_event = null
+      },
       capture() {
         this.canvas = this.$refs.canvas;
         var context = this.canvas.getContext("2d").drawImage(this.videoRef, 0, 0, 640, 480);
@@ -70,7 +118,7 @@
         }).then((response) => {
           this.event = response.data.data
           this.has_event = true
-          console.log(this.event)
+          this.goto_step(2)
         }, (error) => {
           console.log(error)
         });
@@ -81,7 +129,22 @@
         //   }).catch((err) => {
         //     console.log(err)
         //   });
-
+      },
+      goto_step(step){
+        this.step = step
+        if(this.step == 1){
+          this.reset_event()
+        } else if (this.step == 2){
+          this.saved_event = null
+        }
+      },
+      save_event(event){
+        axios.post('http://localhost:5000/save-event', event).then((response) => {
+          this.saved_event = response.data.data
+          this.goto_step(3)
+        }, (error) => {
+          console.log(error)
+        });
       }
     },
     mounted() {
@@ -105,9 +168,9 @@
 #video {
     background-color: #000000;
     align-center: true;
-    position: absolute;
+    position: relative;
     top:40px;
-    left:80px;
+    left: 0px;
 }
 
 #canvas {
@@ -134,4 +197,21 @@
   position: absolute;
   top:560px;
 }
+
+.active {
+  font-weight: bold
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {background-color: #f2f2f2;}
+
 </style>
