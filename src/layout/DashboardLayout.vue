@@ -2,7 +2,7 @@
   <div class="wrapper">
     <side-bar>
       <mobile-menu slot="content"></mobile-menu>
-      <sidebar-link to="/admin/overview">
+      <!-- <sidebar-link to="/admin/overview">
         <i class="nc-icon nc-chart-pie-35"></i>
         <p>Dashboard</p>
       </sidebar-link>
@@ -33,6 +33,10 @@
       <sidebar-link to="/admin/tensorflow_demo">
         <i class="nc-icon nc-layers-3"></i>
         <p>Tensorflow Demo</p>
+      </sidebar-link> -->
+      <sidebar-link to="/admin/datify_demo">
+        <i class="nc-icon nc-layers-3"></i>
+        <p>Datify Demo</p>
       </sidebar-link>
 
       <template slot="bottom-links">

@@ -11,6 +11,7 @@ import Icons from 'src/pages/Icons.vue'
 import Maps from 'src/pages/Maps.vue'
 import Notifications from 'src/pages/Notifications.vue'
 import TensorflowDemo from 'src/pages/TensorflowDemo.vue'
+import DatifyDemo from 'src/pages/DatifyDemo.vue'
 import Upgrade from 'src/pages/Upgrade.vue'
 
 const routes = [
@@ -63,6 +64,11 @@ const routes = [
         path: 'tensorflow_demo',
         name: 'TensorflowDemo',
         component: TensorflowDemo
+      },
+      {
+        path: 'datify_demo',
+        name: 'DatifyDemo',
+        component: DatifyDemo
       },
       {
         path: 'upgrade',
