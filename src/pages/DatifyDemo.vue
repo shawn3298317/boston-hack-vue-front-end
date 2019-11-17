@@ -16,14 +16,13 @@
               <canvas ref="canvas" id="canvas" width="640" height="480"></canvas>
             </div>
             
-            
-            
-            <!-- <ul>
-                <li v-for="c in captures">
-                    <img v-bind:src="c" height="50" />
-                </li>
-            </ul> -->
 
+            <div v-if="has_event" class="output">
+              <h4>Detected Event:</h4>
+              <h5>Event name: {{event.name}}</h5> <button>Edit Name</button>
+              <h5>Event time: {{event.date_time.start}} - {{event.date_time.end}}</h5> <button>Edit Time</button>
+              <h5>Event location: {{event.location}}</h5> <button>Edit Location</button>  
+            </div>
           </div>
           
         </div>
@@ -52,7 +51,9 @@
         },
         video: {},
         canvas: {},
-        captures: {}
+        captures: {},
+        event: {},
+        has_event: false
       }
     },
     methods: {
@@ -67,7 +68,9 @@
           'img': this.canvas.toDataURL("image/jpeg"),
           'uid': 123
         }).then((response) => {
-          console.log(response)
+          this.event = response.data.data
+          this.has_event = true
+          console.log(this.event)
         }, (error) => {
           console.log(error)
         });
@@ -117,7 +120,7 @@
 
 .video-container {
   width: 100%;
-  height: 600;
+  height: 1000px;
 }
 
 .snap-btn {
@@ -125,5 +128,10 @@
   top:0px;
   left:100px;
   width:10%;
+}
+
+.output {
+  position: absolute;
+  top:560px;
 }
 </style>
